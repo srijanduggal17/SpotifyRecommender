@@ -81,7 +81,7 @@ def calculateCI(search, results):
     results['validation_upper_ci'] = results.apply(lambda row: t.interval(0.95, search.n_splits_ - 1, loc=row.mean_test_score, scale=row.std_test_score)[1], axis=1)
     results['train_lower_ci'] = results.apply(lambda row: t.interval(0.95, search.n_splits_ - 1, loc=row.mean_train_score, scale=row.std_train_score)[0], axis=1)
     results['train_upper_ci'] = results.apply(lambda row: t.interval(0.95, search.n_splits_ - 1, loc=row.mean_train_score, scale=row.std_train_score)[1], axis=1)
-    results.drop(['mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time', 'params',
+    results.drop(['std_fit_time', 'mean_score_time', 'std_score_time', 'params',
        'split0_test_score', 'split1_test_score', 'split2_test_score',
        'split3_test_score', 'split4_test_score', 'rank_test_score', 'split0_train_score',
        'split1_train_score', 'split2_train_score', 'split3_train_score',
@@ -117,39 +117,39 @@ def plot_adaboost_search_results(search, results, experiment):
     return results
     
 ### Experiment 1 ###
-# exp_1_param_grid = [{'n_estimators': np.arange(10, 360, 10),
-#                'learning_rate': [1, .1, .01, .001, .0001]}
-#              ]
+exp_1_param_grid = [{'n_estimators': np.arange(10, 360, 10),
+               'learning_rate': [1, .1, .01, .001, .0001]}
+             ]
 
-# exp_1_start_time = time.time()
-# exp_1_search = GridSearchCV(AdaBoostClassifier(random_state=62), param_grid=exp_1_param_grid, scoring=scorer, cv=5, return_train_score=True, n_jobs=-1)
-# exp_1_search.fit(X_train_scaled, y_train)
-# exp_1_search_results = pd.DataFrame(exp_1_search.cv_results_)
-# exp_1_results = plot_adaboost_search_results(exp_1_search, exp_1_search_results, '/Experiment 1')
-# print('Experiment 1 Time: {:6.4f} seconds'.format(time.time() - exp_1_start_time))
-# # print('Experiment 1 Results')
-# # print(exp_1_results)
+exp_1_start_time = time.time()
+exp_1_search = GridSearchCV(AdaBoostClassifier(random_state=62), param_grid=exp_1_param_grid, scoring=scorer, cv=5, return_train_score=True, n_jobs=-1)
+exp_1_search.fit(X_train_scaled, y_train)
+exp_1_search_results = pd.DataFrame(exp_1_search.cv_results_)
+exp_1_results = plot_adaboost_search_results(exp_1_search, exp_1_search_results, '/Experiment 1')
+print('Experiment 1 Time: {:6.4f} seconds'.format(time.time() - exp_1_start_time))
+# print('Experiment 1 Results')
+# print(exp_1_results)
 
 ### Experiment 2 ###
-# exp_2_param_grid = [{'n_estimators': np.arange(10, 360, 10),
-#                'learning_rate': [.03, .05, .07, .09, 0.3, 0.5, 0.7, 0.9]}
-#              ]
+exp_2_param_grid = [{'n_estimators': np.arange(10, 360, 10),
+               'learning_rate': [.03, .05, .07, .09, 0.3, 0.5, 0.7, 0.9]}
+             ]
 
-# exp_2_start_time = time.time()
-# exp_2_search = GridSearchCV(AdaBoostClassifier(random_state=62), param_grid=exp_2_param_grid, scoring=scorer, cv=5, return_train_score=True, n_jobs=-1)
-# exp_2_search.fit(X_train_scaled, y_train)
-# exp_2_search_results = pd.DataFrame(exp_2_search.cv_results_)
-# exp_2_results = plot_adaboost_search_results(exp_2_search, exp_2_search_results, '/Experiment 2')
-# print('Experiment 2 Time: {:6.4f} seconds'.format(time.time() - exp_2_start_time))
-# # print('Experiment 2 Results')
-# # print(exp_2_results)
+exp_2_start_time = time.time()
+exp_2_search = GridSearchCV(AdaBoostClassifier(random_state=62), param_grid=exp_2_param_grid, scoring=scorer, cv=5, return_train_score=True, n_jobs=-1)
+exp_2_search.fit(X_train_scaled, y_train)
+exp_2_search_results = pd.DataFrame(exp_2_search.cv_results_)
+exp_2_results = plot_adaboost_search_results(exp_2_search, exp_2_search_results, '/Experiment 2')
+print('Experiment 2 Time: {:6.4f} seconds'.format(time.time() - exp_2_start_time))
+# print('Experiment 2 Results')
+# print(exp_2_results)
 
 ### Hyperparameter Choice ###
-# rfboost_criteria = (exp_2_results.param_learning_rate == 0.7) & (exp_2_results.param_n_estimators == 10)
-# chosen_rfboost_precision = exp_2_results[rfboost_criteria].mean_test_score.values[0]
-# chosen_rfboost_tolerance = exp_2_results[rfboost_criteria].validation_upper_ci.values[0] - chosen_rfboost_precision
-# print('The chosen Random Forest with Boosting model has 10 estimators and a learning rate of 0.7')
-# print('This model has a precision of {:.2f} +/- {:.2f}'.format(chosen_rfboost_precision, chosen_rfboost_tolerance))
+rfboost_criteria = (exp_2_results.param_learning_rate == 0.7) & (exp_2_results.param_n_estimators == 10)
+chosen_rfboost_precision = exp_2_results[rfboost_criteria].mean_test_score.values[0]
+chosen_rfboost_tolerance = exp_2_results[rfboost_criteria].validation_upper_ci.values[0] - chosen_rfboost_precision
+print('The chosen Random Forest with Boosting model has 10 estimators and a learning rate of 0.7')
+print('This model has a precision of {:.2f} +/- {:.2f}'.format(chosen_rfboost_precision, chosen_rfboost_tolerance))
 
 
 ##### Support Vector Machines #####
@@ -217,34 +217,34 @@ def plot_svm_search_results(search, results):
     return results
 
 ### Experiment 3 ###
-# exp_3_param_grid = [{   'kernel': ['poly'],
-#                         'C':[0.00001, 0.0001, 0.001, 0.01, 0.1, 1],
-#                         'degree': [3, 5, 7],
-#                         'gamma': [1, 0.1, 0.01, .001]},
-#                     {   'kernel': ['linear'],
-#                         'C': [100, 10, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001]},
-#                     {
-#                         'kernel': ['sigmoid', 'rbf'],
-#                         'C': [100, 10, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001],
-#                         'gamma': [1, 0.1, 0.01, .001]}
-#                     ]
+exp_3_param_grid = [{   'kernel': ['poly'],
+                        'C':[0.00001, 0.0001, 0.001, 0.01, 0.1, 1],
+                        'degree': [3, 5, 7],
+                        'gamma': [1, 0.1, 0.01, .001]},
+                    {   'kernel': ['linear'],
+                        'C': [100, 10, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001]},
+                    {
+                        'kernel': ['sigmoid', 'rbf'],
+                        'C': [100, 10, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001],
+                        'gamma': [1, 0.1, 0.01, .001]}
+                    ]
 
-# exp_3_start_time = time.time()
-# exp_3_search = GridSearchCV(SVC(gamma='scale', class_weight='balanced', random_state=75), param_grid=exp_3_param_grid, scoring=scorer, cv=5, return_train_score=True, n_jobs=-1)
-# exp_3_search.fit(X_train_scaled, y_train)
-# exp_3_search_results = pd.DataFrame(exp_3_search.cv_results_)
-# exp_3_results = plot_svm_search_results(exp_3_search, exp_3_search_results)
-# print('Experiment Time: {:6.4f} seconds'.format(time.time() - exp_3_start_time))
-# # print('Experiment 3 Results')
-# # print(exp_3_results)
+exp_3_start_time = time.time()
+exp_3_search = GridSearchCV(SVC(gamma='scale', class_weight='balanced', random_state=75), param_grid=exp_3_param_grid, scoring=scorer, cv=5, return_train_score=True, n_jobs=-1)
+exp_3_search.fit(X_train_scaled, y_train)
+exp_3_search_results = pd.DataFrame(exp_3_search.cv_results_)
+exp_3_results = plot_svm_search_results(exp_3_search, exp_3_search_results)
+print('Experiment Time: {:6.4f} seconds'.format(time.time() - exp_3_start_time))
+# print('Experiment 3 Results')
+# print(exp_3_results)
 
 
-# ### Hyperparameter Choice ###
-# svm_criteria = (exp_3_results.param_kernel == 'linear') & (exp_3_results.param_C == 0.001)
-# chosen_svm_precision = exp_3_results[svm_criteria].mean_test_score.values[0]
-# chosen_svm_tolerance = exp_3_results[svm_criteria].validation_upper_ci.values[0] - chosen_svm_precision
-# print('The chosen SVM model had a linear kernel and C = 0.001')
-# print('This model has a precision of {:.2f} +/- {:.2f}'.format(chosen_svm_precision, chosen_svm_tolerance))
+### Hyperparameter Choice ###
+svm_criteria = (exp_3_results.param_kernel == 'linear') & (exp_3_results.param_C == 0.001)
+chosen_svm_precision = exp_3_results[svm_criteria].mean_test_score.values[0]
+chosen_svm_tolerance = exp_3_results[svm_criteria].validation_upper_ci.values[0] - chosen_svm_precision
+print('The chosen SVM model had a linear kernel and C = 0.001')
+print('This model has a precision of {:.2f} +/- {:.2f}'.format(chosen_svm_precision, chosen_svm_tolerance))
 
 
 ##### Neural Networks #####
@@ -307,17 +307,12 @@ def plot_nn_search_results(search, results):
     return best_results
     
 ### Experiment 4 ###
-hidden_layers_1 = [(x,x) for x in np.arange(1,8,1)]
-hidden_layers_2 = [(x,x,x) for x in np.arange(1,8,1)]
-# param_grid = [{
-#                 'hidden_layer_sizes': hidden_layers_1 + hidden_layers_2,
-#                 'activation': ['logistic','relu','tanh'],
-#                 'alpha': [1, .1, .01, .001, 0.0001, .00001, .000001, .0000001]
-#               }]
+hidden_layers_1 = [(x,x) for x in np.arange(1,26,1)]
+hidden_layers_2 = [(x,x,x) for x in np.arange(1,26,1)]
 param_grid = [{
                 'hidden_layer_sizes': hidden_layers_1 + hidden_layers_2,
-                'activation': ['relu'],
-                'alpha': [1]
+                'activation': ['logistic','relu','tanh'],
+                'alpha': [1, .1, .01, .001, 0.0001, .00001, .000001, .0000001]
               }]
 
 exp_4_start_time = time.time()
@@ -326,314 +321,213 @@ exp_4_search.fit(X_train_scaled, y_train)
 exp_4_search_results = pd.DataFrame(exp_4_search.cv_results_)
 exp_4_best_results = plot_nn_search_results(exp_4_search, exp_4_search_results)
 print('Experiment Time: {:6.4f} seconds'.format(time.time() - exp_4_start_time))
-print('Experiment 4 Best Results')
-print(exp_4_best_results)
+# print('Experiment 4 Best Results')
+# print(exp_4_best_results)
 
 ### Hyperparameter Choice ###
-print('hello')
-nn_criteria = (exp_4_best_results.param_activation == 'relu') & (exp_4_best_results.num_hidden_layers == 2)
+nn_criteria = (exp_4_best_results.param_activation == 'tanh') & (exp_4_best_results.num_hidden_layers == 2)
 chosen_nn_precision = exp_4_best_results[nn_criteria].mean_test_score.values[0]
 chosen_nn_tolerance = exp_4_best_results[nn_criteria].validation_upper_ci.values[0] - chosen_nn_precision
-print('The chosen Neural Network model had a relu activation, 2 hidden layers, 7 nodes per layer, and alpha = 1.0')
+print('The chosen Neural Network model had a tanh activation, 2 hidden layers, 7 nodes per layer, and alpha = 1.0')
 print('This model has a precision of {:.2f} +/- {:.2f}'.format(chosen_nn_precision, chosen_nn_tolerance))
 
 
-# # ## Algorithm Performance
+########## Algorithm Performance ##########
+### Experiment 5 ###
+kf = KFold(n_splits=3, shuffle=True, random_state=84)
+splits = kf.split(X_test_scaled)
 
+results_arr = []
+np.random.seed(47)
 
+boosted_time = []
+support_time = []
+nn_time = []
 
-
-# kf = KFold(n_splits=3, shuffle=True, random_state=84)
-# splits = kf.split(X_test_scaled)
-
-# results_arr = []
-# np.random.seed(47)
-
-# for train_ind, test_ind in splits:
-#     X_additional_train_cur = X_test_scaled[train_ind]
-#     y_additional_train_cur = y_test[train_ind]
-#     X_test_cur = X_test_scaled[test_ind]
-#     y_test_cur = y_test[test_ind]
+for train_ind, test_ind in splits:
+    X_additional_train_cur = X_test_scaled[train_ind]
+    y_additional_train_cur = y_test[train_ind]
+    X_test_cur = X_test_scaled[test_ind]
+    y_test_cur = y_test[test_ind]
     
-#     X_train_cur = np.concatenate((X_train_scaled,X_additional_train_cur))
-#     y_train_cur = np.concatenate((y_train, y_additional_train_cur))
+    X_train_cur = np.concatenate((X_train_scaled,X_additional_train_cur))
+    y_train_cur = np.concatenate((y_train, y_additional_train_cur))
     
-#     indices = np.arange(0, len(X_train_cur), 1)
-#     np.random.shuffle(indices)
+    indices = np.arange(0, len(X_train_cur), 1)
+    np.random.shuffle(indices)
     
-#     X_train_cur = X_train_cur[indices]
-#     y_train_cur = y_train_cur[indices]
+    X_train_cur = X_train_cur[indices]
+    y_train_cur = y_train_cur[indices]
     
-#     pre_boost = time.time()
-#     boosted = AdaBoostClassifier(random_state=62, learning_rate=0.7, n_estimators=10)
-#     boosted.fit(X_train_cur, y_train_cur)
-#     print('Boost Time: {:6.4f}'.format(time.time()-pre_boost))
+    pre_boost = time.time()
+    boosted = AdaBoostClassifier(random_state=62, learning_rate=0.7, n_estimators=10)
+    boosted.fit(X_train_cur, y_train_cur)
+    boosted_time.append(time.time()-pre_boost)
     
-#     pre_support = time.time()
-#     support = SVC(gamma='scale', class_weight='balanced', random_state=75, kernel='linear', C=0.001)
-#     support.fit(X_train_cur, y_train_cur)
-#     print('Support Time: {:6.4f}'.format(time.time()-pre_support))
+    pre_support = time.time()
+    support = SVC(gamma='scale', class_weight='balanced', random_state=75, kernel='linear', C=0.001)
+    support.fit(X_train_cur, y_train_cur)
+    support_time.append(time.time()-pre_support)
     
-#     pre_nn = time.time()
-#     nn = MLPClassifier(solver='lbfgs', random_state=193, hidden_layer_sizes=(7,7,), activation='relu', alpha=1)
-#     nn.fit(X_train_cur, y_train_cur)
-#     print('NN Time: {:6.4f}'.format(time.time()-pre_nn))
+    pre_nn = time.time()
+    nn = MLPClassifier(solver='lbfgs', random_state=193, hidden_layer_sizes=(5,5), activation='tanh', alpha=1)
+    nn.fit(X_train_cur, y_train_cur)
+    nn_time.append(time.time()-pre_nn)
 
-#     boosted_train_predict = boosted.predict(X_train_cur)
-#     boosted_test_predict = boosted.predict(X_test_cur)
-#     support_train_predict = support.predict(X_train_cur)
-#     support_test_predict = support.predict(X_test_cur)
-#     nn_train_predict = nn.predict(X_train_cur)
-#     nn_test_predict = nn.predict(X_test_cur)
+    boosted_train_predict = boosted.predict(X_train_cur)
+    boosted_test_predict = boosted.predict(X_test_cur)
+    support_train_predict = support.predict(X_train_cur)
+    support_test_predict = support.predict(X_test_cur)
+    nn_train_predict = nn.predict(X_train_cur)
+    nn_test_predict = nn.predict(X_test_cur)
 
-#     boosted_train_precision = precision_score(y_train_cur, boosted_train_predict, pos_label='saved')
-#     boosted_test_precision = precision_score(y_test_cur, boosted_test_predict, pos_label='saved')
-#     support_train_precision = precision_score(y_train_cur, support_train_predict, pos_label='saved')
-#     support_test_precision = precision_score(y_test_cur, support_test_predict, pos_label='saved')
-#     nn_train_precision = precision_score(y_train_cur, nn_train_predict, pos_label='saved')
-#     nn_test_precision = precision_score(y_test_cur, nn_test_predict, pos_label='saved')
+    boosted_train_precision = precision_score(y_train_cur, boosted_train_predict, pos_label='saved')
+    boosted_test_precision = precision_score(y_test_cur, boosted_test_predict, pos_label='saved')
+    support_train_precision = precision_score(y_train_cur, support_train_predict, pos_label='saved')
+    support_test_precision = precision_score(y_test_cur, support_test_predict, pos_label='saved')
+    nn_train_precision = precision_score(y_train_cur, nn_train_predict, pos_label='saved')
+    nn_test_precision = precision_score(y_test_cur, nn_test_predict, pos_label='saved')
     
-#     boosted_train_confusion = confusion_matrix(y_train_cur, boosted_train_predict, labels=['saved', 'unsaved'])
-#     boosted_test_confusion = confusion_matrix(y_test_cur, boosted_test_predict, labels=['saved', 'unsaved'])
-#     support_train_confusion = confusion_matrix(y_train_cur, support_train_predict, labels=['saved', 'unsaved'])
-#     support_test_confusion = confusion_matrix(y_test_cur, support_test_predict, labels=['saved', 'unsaved'])
-#     nn_train_confusion = confusion_matrix(y_train_cur, nn_train_predict, labels=['saved', 'unsaved'])
-#     nn_test_confusion = confusion_matrix(y_test_cur, nn_test_predict, labels=['saved', 'unsaved'])
+    boosted_train_confusion = confusion_matrix(y_train_cur, boosted_train_predict, labels=['saved', 'unsaved'])
+    boosted_test_confusion = confusion_matrix(y_test_cur, boosted_test_predict, labels=['saved', 'unsaved'])
+    support_train_confusion = confusion_matrix(y_train_cur, support_train_predict, labels=['saved', 'unsaved'])
+    support_test_confusion = confusion_matrix(y_test_cur, support_test_predict, labels=['saved', 'unsaved'])
+    nn_train_confusion = confusion_matrix(y_train_cur, nn_train_predict, labels=['saved', 'unsaved'])
+    nn_test_confusion = confusion_matrix(y_test_cur, nn_test_predict, labels=['saved', 'unsaved'])
     
-#     results_cur = {
-#         'boosted_train_precision' : boosted_train_precision,
-#         'boosted_test_precision' : boosted_test_precision,
-#         'support_train_precision' : support_train_precision,
-#         'support_test_precision' : support_test_precision,
-#         'nn_train_precision': nn_train_precision,
-#         'nn_test_precision' : nn_test_precision,
-#         'boosted_train_confusion' : boosted_train_confusion,
-#         'boosted_test_confusion' : boosted_test_confusion,
-#         'support_train_confusion' : support_train_confusion,
-#         'support_test_confusion' : support_test_confusion,
-#         'nn_train_confusion' : nn_train_confusion,
-#         'nn_test_confusion' : nn_test_confusion
-#     }
+    results_cur = {
+        'boosted_train_precision' : boosted_train_precision,
+        'boosted_test_precision' : boosted_test_precision,
+        'support_train_precision' : support_train_precision,
+        'support_test_precision' : support_test_precision,
+        'nn_train_precision': nn_train_precision,
+        'nn_test_precision' : nn_test_precision,
+        'boosted_train_confusion' : boosted_train_confusion,
+        'boosted_test_confusion' : boosted_test_confusion,
+        'support_train_confusion' : support_train_confusion,
+        'support_test_confusion' : support_test_confusion,
+        'nn_train_confusion' : nn_train_confusion,
+        'nn_test_confusion' : nn_test_confusion
+    }
     
 
-#     results_arr.append(results_cur)
+    results_arr.append(results_cur)
 
-# df_algo_compare = pd.DataFrame(results_arr)
-
-
-
-# mean_algo_results = np.mean(df_algo_compare)
-# std_algo_results = np.std(df_algo_compare)
+print('Random Forests with Boosting Mean Training Time: {:.2f} seconds'.format(np.mean(boosted_time)))
+print('Support Vector Machine Mean Training Time: {:.2f} seconds'.format(np.mean(support_time)))
+print('Neural Network Mean Training Time: {:.2f} seconds'.format(np.mean(nn_time)))
 
 
+df_algo_compare = pd.DataFrame(results_arr)
+mean_algo_results = np.mean(df_algo_compare)
+std_algo_results = np.std(df_algo_compare)
 
-# data = {
-#     'boosted': {
-#         'mean_test': mean_algo_results.boosted_test_precision,
-#         'mean_train': mean_algo_results.boosted_train_precision,
-#         'lower_test_ci': t.interval(0.95, 2, loc=mean_algo_results.boosted_test_precision,
-#                                     scale=std_algo_results.boosted_test_precision)[0],
-#         'upper_test_ci': t.interval(0.95, 2, loc=mean_algo_results.boosted_test_precision,
-#                                     scale=std_algo_results.boosted_test_precision)[1],
-#         'lower_train_ci': t.interval(0.95, 2, loc=mean_algo_results.boosted_train_precision,
-#                                     scale=std_algo_results.boosted_train_precision)[0],
-#         'upper_train_ci': t.interval(0.95, 2, loc=mean_algo_results.boosted_train_precision,
-#                                     scale=std_algo_results.boosted_train_precision)[1],
-#         'test_confusion': mean_algo_results.boosted_test_confusion,
-#         'train_confusion': mean_algo_results.boosted_train_confusion
-#     },
-#     'support': {
-#         'mean_test': mean_algo_results.support_test_precision,
-#         'mean_train': mean_algo_results.support_train_precision,
-#         'lower_test_ci': t.interval(0.95, 2, loc=mean_algo_results.support_test_precision,
-#                                     scale=std_algo_results.support_test_precision)[0],
-#         'upper_test_ci': t.interval(0.95, 2, loc=mean_algo_results.support_test_precision,
-#                                     scale=std_algo_results.support_test_precision)[1],
-#         'lower_train_ci': t.interval(0.95, 2, loc=mean_algo_results.support_train_precision,
-#                                     scale=std_algo_results.support_train_precision)[0],
-#         'upper_train_ci': t.interval(0.95, 2, loc=mean_algo_results.support_train_precision,
-#                                     scale=std_algo_results.support_train_precision)[1],
-#         'test_confusion': mean_algo_results.support_test_confusion,
-#         'train_confusion': mean_algo_results.support_train_confusion
-#     },
-#     'nn': {
-#         'mean_test': mean_algo_results.nn_test_precision,
-#         'mean_train': mean_algo_results.nn_train_precision,
-#         'lower_test_ci': t.interval(0.95, 2, loc=mean_algo_results.nn_test_precision,
-#                                     scale=std_algo_results.nn_test_precision)[0],
-#         'upper_test_ci': t.interval(0.95, 2, loc=mean_algo_results.nn_test_precision,
-#                                     scale=std_algo_results.nn_test_precision)[1],
-#         'lower_train_ci': t.interval(0.95, 2, loc=mean_algo_results.nn_train_precision,
-#                                     scale=std_algo_results.nn_train_precision)[0],
-#         'upper_train_ci': t.interval(0.95, 2, loc=mean_algo_results.nn_train_precision,
-#                                     scale=std_algo_results.nn_train_precision)[1],
-#         'test_confusion': mean_algo_results.nn_test_confusion,
-#         'train_confusion': mean_algo_results.nn_train_confusion
-#     }
-# }
+data = {
+    'boosted': {
+        'mean_test': mean_algo_results.boosted_test_precision,
+        'mean_train': mean_algo_results.boosted_train_precision,
+        'lower_test_ci': t.interval(0.95, 2, loc=mean_algo_results.boosted_test_precision,
+                                    scale=std_algo_results.boosted_test_precision)[0],
+        'upper_test_ci': t.interval(0.95, 2, loc=mean_algo_results.boosted_test_precision,
+                                    scale=std_algo_results.boosted_test_precision)[1],
+        'lower_train_ci': t.interval(0.95, 2, loc=mean_algo_results.boosted_train_precision,
+                                    scale=std_algo_results.boosted_train_precision)[0],
+        'upper_train_ci': t.interval(0.95, 2, loc=mean_algo_results.boosted_train_precision,
+                                    scale=std_algo_results.boosted_train_precision)[1],
+        'test_confusion': mean_algo_results.boosted_test_confusion,
+        'train_confusion': mean_algo_results.boosted_train_confusion
+    },
+    'support': {
+        'mean_test': mean_algo_results.support_test_precision,
+        'mean_train': mean_algo_results.support_train_precision,
+        'lower_test_ci': t.interval(0.95, 2, loc=mean_algo_results.support_test_precision,
+                                    scale=std_algo_results.support_test_precision)[0],
+        'upper_test_ci': t.interval(0.95, 2, loc=mean_algo_results.support_test_precision,
+                                    scale=std_algo_results.support_test_precision)[1],
+        'lower_train_ci': t.interval(0.95, 2, loc=mean_algo_results.support_train_precision,
+                                    scale=std_algo_results.support_train_precision)[0],
+        'upper_train_ci': t.interval(0.95, 2, loc=mean_algo_results.support_train_precision,
+                                    scale=std_algo_results.support_train_precision)[1],
+        'test_confusion': mean_algo_results.support_test_confusion,
+        'train_confusion': mean_algo_results.support_train_confusion
+    },
+    'nn': {
+        'mean_test': mean_algo_results.nn_test_precision,
+        'mean_train': mean_algo_results.nn_train_precision,
+        'lower_test_ci': t.interval(0.95, 2, loc=mean_algo_results.nn_test_precision,
+                                    scale=std_algo_results.nn_test_precision)[0],
+        'upper_test_ci': t.interval(0.95, 2, loc=mean_algo_results.nn_test_precision,
+                                    scale=std_algo_results.nn_test_precision)[1],
+        'lower_train_ci': t.interval(0.95, 2, loc=mean_algo_results.nn_train_precision,
+                                    scale=std_algo_results.nn_train_precision)[0],
+        'upper_train_ci': t.interval(0.95, 2, loc=mean_algo_results.nn_train_precision,
+                                    scale=std_algo_results.nn_train_precision)[1],
+        'test_confusion': mean_algo_results.nn_test_confusion,
+        'train_confusion': mean_algo_results.nn_train_confusion
+    }
+}
 
-# df_algo_results = pd.DataFrame.from_dict(data, orient='index')
-# df_algo_results['test_upper'] = df_algo_results.mean_test - df_algo_results.lower_test_ci
-# df_algo_results['test_lower'] = df_algo_results.upper_test_ci - df_algo_results.mean_test
-# df_algo_results['trn_lower'] = df_algo_results.mean_train - df_algo_results.lower_train_ci
-# df_algo_results['trn_upper'] = df_algo_results.upper_train_ci - df_algo_results.mean_train
-# print(df_algo_results)
+df_algo_results = pd.DataFrame.from_dict(data, orient='index')
+print('Experiment 5 Results')
+print(df_algo_results)
 
+boosted_precision = df_algo_results.mean_test.boosted
+boosted_tolerance = df_algo_results.upper_test_ci.boosted - boosted_precision
+support_precision = df_algo_results.mean_test.support
+support_tolerance = df_algo_results.upper_test_ci.support - support_precision
+nn_precision = df_algo_results.mean_test.nn
+nn_tolerance = df_algo_results.upper_test_ci.nn - nn_precision
 
+print('The Random Forest with Boosting  has a precision of {:.2f} +/- {:.2f}'.format(boosted_precision, boosted_tolerance))
+print('The Support Vector Machine has a precision of {:.2f} +/- {:.2f}'.format(support_precision, support_tolerance))
+print('The Neural Network has a precision of {:.2f} +/- {:.2f}'.format(nn_precision, nn_tolerance))
 
-# fig = plt.figure(figsize=(11,8))
-# width=0.4
-# plt.bar(np.arange(len(df_algo_results))+width, df_algo_results.mean_train, yerr=[df_algo_results.trn_lower, df_algo_results.trn_upper], width=width, tick_label=df_algo_results.index)
-# plt.bar(np.arange(len(df_algo_results)), df_algo_results.mean_test, yerr=[df_algo_results.test_lower, df_algo_results.test_upper], width=width, tick_label=df_algo_results.index)
-# plt.xticks(rotation=70)
-# plt.title('Algorithm Comparison')
-# plt.ylabel('Precision')
-# plt.legend(['Train', 'Validation'])
+df_algo_results['test_upper'] = df_algo_results.mean_test - df_algo_results.lower_test_ci
+df_algo_results['test_lower'] = df_algo_results.upper_test_ci - df_algo_results.mean_test
+df_algo_results['trn_lower'] = df_algo_results.mean_train - df_algo_results.lower_train_ci
+df_algo_results['trn_upper'] = df_algo_results.upper_train_ci - df_algo_results.mean_train
 
-# plt.show()
+fig = plt.figure(figsize=(11,8))
+width=0.4
+plt.bar(np.arange(len(df_algo_results))+width, df_algo_results.mean_train, yerr=[df_algo_results.trn_lower, df_algo_results.trn_upper], width=width, tick_label=df_algo_results.index)
+plt.bar(np.arange(len(df_algo_results)), df_algo_results.mean_test, yerr=[df_algo_results.test_lower, df_algo_results.test_upper], width=width, tick_label=df_algo_results.index)
+plt.xticks(rotation=70, ticks=np.arange(3), labels=['Random Forest with Boosting', 'Support Vector Machine', 'Neural Network'])
+plt.title('Algorithm Comparison')
+plt.ylabel('Precision')
+plt.legend(['Train', 'Validation'])
+plt.savefig(dir+'/Experiment 5 Plot.png', bbox_inches='tight')
 
+########## Algorithm Characteristics ##########
+### Confusion Matrices ###
+boosted_conf = df_algo_results.test_confusion.boosted
+svm_conf = df_algo_results.test_confusion.support
+nn_conf = df_algo_results.test_confusion.nn
 
+max_predict = np.max(np.concatenate((boosted_conf,svm_conf,nn_conf)))
 
-# sizes = np.arange(250, 3500, 250)
+plt.figure()
+ax = plt.axes()
+sns.heatmap(df_algo_results.test_confusion.boosted, cbar_kws={'label':'Average # Predicted'}, ax=ax, 
+            annot=True, annot_kws={'size': 20}, fmt='.2f', vmin=0, vmax=max_predict)
+ax.set_xticklabels(['predicted saved', 'predicted unsaved'], {'fontsize': 14})
+ax.set_yticklabels(['saved', 'unsaved'], {'fontsize': 14})
+ax.set_title('Confusion Matrix for Random Forest with Boosting', {'fontsize': 16})
+plt.savefig(dir+'/Confusion Matrix Random Forest.png')
 
-# splits = kf.split(X_test_scaled)
+plt.figure()
+ax = plt.axes()
+sns.heatmap(df_algo_results.test_confusion.support, cbar_kws={'label':'Average # Predicted'}, ax=ax,
+            annot=True, annot_kws={'size': 20}, fmt='.2f', vmin=0, vmax=max_predict)
+ax.set_xticklabels(['predicted saved', 'predicted unsaved'], {'fontsize': 14})
+ax.set_yticklabels(['saved', 'unsaved'], {'fontsize': 14})
+ax.set_title('Confusion Matrix for Support Vector Machine', {'fontsize': 16})
+plt.savefig(dir+'/Confusion Matrix Support Vector Machine.png')
 
-# np.random.seed(47)
-
-# X_test_cur = X_test_scaled
-# y_test_cur = y_test
-
-# X_train_cur = X_train_scaled
-# y_train_cur = y_train
-
-# indices = np.arange(0, len(X_train_cur), 1)
-# np.random.shuffle(indices)
-
-# X_train_cur = X_train_cur[indices]
-# y_train_cur = y_train_cur[indices]
-
-# results_arr = []
-# kf = KFold(n_splits=3, shuffle=True, random_state=84)
-
-# for size in sizes:    
-#     #split test data into folds
-#     splits = kf.split(X_test_scaled)
-
-#     size_results = []
-#     np.random.seed(47)
-
-#     for train_ind, test_ind in splits:
-#         current_results_arr = []
-
-#         X_additional_train_cur = X_test_scaled[train_ind]
-#         y_additional_train_cur = y_test[train_ind]
-#         X_test_cur = X_test_scaled[test_ind]
-#         y_test_cur = y_test[test_ind]
-
-#         X_train_cur = np.concatenate((X_train_scaled,X_additional_train_cur))
-#         y_train_cur = np.concatenate((y_train, y_additional_train_cur))
-
-#         indices = np.arange(0, len(X_train_cur), 1)
-#         np.random.shuffle(indices)
-
-#         X_train_cur = X_train_cur[indices]
-#         y_train_cur = y_train_cur[indices]   
-
-#         X_train_size = X_train_cur[0:size,:]
-#         y_train_size = y_train_cur[0:size]
-
-#         boosted = AdaBoostClassifier(random_state=62, learning_rate=0.7, n_estimators=10)
-#         support = SVC(gamma='scale', class_weight='balanced', random_state=75, kernel='linear', C=0.001)
-#         nn = MLPClassifier(solver='lbfgs', random_state=193, hidden_layer_sizes=(7,7,), activation='relu', alpha=1)
-
-#         boosted.fit(X_train_size, y_train_size)
-#         support.fit(X_train_size, y_train_size)
-#         nn.fit(X_train_size, y_train_size)
-
-#         boosted_train_predict = boosted.predict(X_train_size)
-#         boosted_test_predict = boosted.predict(X_test_cur)
-#         support_train_predict = support.predict(X_train_size)
-#         support_test_predict = support.predict(X_test_cur)
-#         nn_train_predict = nn.predict(X_train_size)
-#         nn_test_predict = nn.predict(X_test_cur)
-
-#         current_results_arr.append(precision_score(y_train_size, boosted_train_predict, pos_label='saved'))
-#         current_results_arr.append(precision_score(y_test_cur, boosted_test_predict, pos_label='saved'))
-#         current_results_arr.append(precision_score(y_train_size, support_train_predict, pos_label='saved'))
-#         current_results_arr.append(precision_score(y_test_cur, support_test_predict, pos_label='saved'))
-#         current_results_arr.append(precision_score(y_train_size, nn_train_predict, pos_label='saved'))
-#         current_results_arr.append(precision_score(y_test_cur, nn_test_predict, pos_label='saved'))
-#         size_results.append(current_results_arr)
-    
-#     results_arr.append(np.concatenate((np.mean(size_results, axis=0), np.std(size_results, axis=0))))
-
-
-# # In[13]:
-
-
-# learning_curve_data = pd.DataFrame(results_arr, 
-#                                    columns=['boosted_train', 'boosted_test', 'support_train', 
-#                                             'support_test', 'nn_train', 'nn_test',
-#                                             'boosted_train_std', 'boosted_test_std', 'support_train_std', 
-#                                             'support_test_std', 'nn_train_std', 'nn_test_std'])
-# learning_curve_data['dataset_size'] = sizes
-
-# algos = ['boosted', 'support', 'nn']
-# for col in algos:
-#     learning_curve_data['{}_test_lower_ci'.format(col)] = learning_curve_data.apply(lambda row: t.interval(0.95, 2, loc=row['{}_test'.format(col)], scale=row['{}_test_std'.format(col)])[0], axis=1)
-#     learning_curve_data['{}_test_upper_ci'.format(col)] = learning_curve_data.apply(lambda row: t.interval(0.95, 2, loc=row['{}_test'.format(col)], scale=row['{}_test_std'.format(col)])[1], axis=1)
-#     learning_curve_data['{}_train_lower_ci'.format(col)] = learning_curve_data.apply(lambda row: t.interval(0.95, 2, loc=row['{}_train'.format(col)], scale=row['{}_train_std'.format(col)])[0], axis=1)
-#     learning_curve_data['{}_train_upper_ci'.format(col)] = learning_curve_data.apply(lambda row: t.interval(0.95, 2, loc=row['{}_train'.format(col)], scale=row['{}_train_std'.format(col)])[1], axis=1)
- 
-#     fig = plt.figure()
-#     plt.plot(learning_curve_data.dataset_size, learning_curve_data['{}_train'.format(col)])
-#     plt.plot(learning_curve_data.dataset_size, learning_curve_data['{}_test'.format(col)])
-#     title = 'Learning Curve for {}'.format(col)
-#     plt.title(title)
-#     plt.xlabel('Dataset Size')
-#     plt.ylabel('Precision')
-#     plt.ylim(top=1.0)
-#     plt.ylim(bottom=0.0)
-#     plt.fill_between(learning_curve_data.dataset_size, learning_curve_data['{}_train_lower_ci'.format(col)], learning_curve_data['{}_train_upper_ci'.format(col)], alpha=0.2)
-#     plt.fill_between(learning_curve_data.dataset_size, learning_curve_data['{}_test_lower_ci'.format(col)], learning_curve_data['{}_test_upper_ci'.format(col)], alpha=0.2) 
-#     plt.legend(['Train', 'Validation'])
-#     plt.show()
-
-
-
-
-# print(df_algo_results.test_confusion.boosted)
-# print(df_algo_results.test_confusion.support)
-# print(df_algo_results.test_confusion.nn)
-
-
-# boosted_conf = df_algo_results.test_confusion.boosted
-# svm_conf = df_algo_results.test_confusion.support
-# nn_conf = df_algo_results.test_confusion.nn
-
-# max_predict = np.max(np.concatenate((boosted_conf,svm_conf,nn_conf)))
-
-# plt.figure()
-# ax = plt.axes()
-# sns.heatmap(df_algo_results.test_confusion.boosted, cbar_kws={'label':'Average # Predicted'}, ax=ax, 
-#             annot=True, fmt='.2f', vmin=0, vmax=max_predict, xticklabels=['saved', 'unsaved'],
-#             yticklabels=['saved', 'unsaved'])
-# ax.set_title('Confusion Matrix for AdaBoost')
-
-# plt.figure()
-# ax = plt.axes()
-# sns.heatmap(df_algo_results.test_confusion.support, cbar_kws={'label':'Average # Predicted'}, ax=ax,
-#             annot=True, fmt='.2f', vmin=0, vmax=max_predict, xticklabels=['saved', 'unsaved'],
-#             yticklabels=['saved', 'unsaved'])
-# ax.set_title('Confusion Matrix for SVM')
-
-# plt.figure()
-# ax = plt.axes()
-# sns.heatmap(df_algo_results.test_confusion.nn, cbar_kws={'label':'Average # Predicted'}, ax=ax,
-#             annot=True, fmt='.2f', vmin=0, vmax=max_predict, xticklabels=['saved', 'unsaved'],
-#             yticklabels=['saved', 'unsaved'])
-# ax.set_title('Confusion Matrix for NN')
-
-
-
-# print(df_algo_results)
+plt.figure()
+ax = plt.axes()
+sns.heatmap(df_algo_results.test_confusion.nn, cbar_kws={'label':'Average # Predicted'}, ax=ax,
+            annot=True, annot_kws={'size': 20}, fmt='.2f', vmin=0, vmax=max_predict)
+ax.set_xticklabels(['predicted saved', 'predicted unsaved'], {'fontsize': 14})
+ax.set_yticklabels(['saved', 'unsaved'], {'fontsize': 14})
+ax.set_title('Confusion Matrix for Neural Network', {'fontsize': 16})
+plt.savefig(dir+'/Confusion Matrix Neural Network.png')
